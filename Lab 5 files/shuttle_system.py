@@ -14,11 +14,13 @@ routes = {"R1": {"name": "Main Gate - Library", "trips": []},
 MIN_CAPACITY = 10
 DRIVERS = ["Prakash", "Leela", "Imran", "Tom"]
 
+
 def _get_route(route_id):
     """Return the record for route_id, or raise ValueError if unknown."""
     if route_id not in routes:
         raise ValueError(f"Unknown route: {route_id!r}")
     return routes[route_id]
+
 
 def add_trip_log(route_id, passenger_count, logs=None):
     """Record the passenger count for one trip and return the log list.
@@ -30,17 +32,20 @@ def add_trip_log(route_id, passenger_count, logs=None):
     if (isinstance(passenger_count, bool)
             or not isinstance(passenger_count, int)
             or passenger_count < 0):
-        raise ValueError(f"Invalid passenger count for {route_id}: {passenger_count!r}")
+        raise ValueError(
+            f"Invalid passenger count for {route_id}: {passenger_count!r}")
     if logs is None:
         logs = []
     route["trips"].append(passenger_count)
     logs.append(f"{datetime.now()}: {route_id} carried {passenger_count}")
     return logs
 
+
 def remove_route(route_id):
     """Delete a route; raises ValueError if it does not exist."""
     _get_route(route_id)
     del routes[route_id]
+
 
 def average_load(route_id):
     """Return the mean passengers per trip, or None if no trips are logged."""
@@ -48,6 +53,7 @@ def average_load(route_id):
     if not trips:
         return None
     return sum(trips) / len(trips)
+
 
 def underused_routes():
     """Return ids of routes whose average load is below MIN_CAPACITY.
@@ -61,10 +67,12 @@ def underused_routes():
             flagged.append(route_id)
     return flagged
 
+
 def assign_driver(route_id):
     """Pick a driver at random for an existing route."""
     _get_route(route_id)
     return secrets.choice(DRIVERS)
+
 
 def sync_fleet_data(file="fleet.json"):
     """Write the routes to a JSON file, then reload them from it."""
@@ -74,6 +82,7 @@ def sync_fleet_data(file="fleet.json"):
         saved = json.load(handle)
     routes.clear()
     routes.update(saved)
+
 
 def main():
     """Run the demo: log sample trips, report, sync and look up a route."""
@@ -105,6 +114,7 @@ def main():
         print("R3 average:", average_load("R3"))
     except ValueError as err:
         print("R3 average:", err)
+
 
 if __name__ == "__main__":
     main()
